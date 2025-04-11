@@ -7,8 +7,10 @@ class First_block{
       add_action( 'admin_enqueue_scripts', array( get_class(), 'enqueue_admin_page_scripts' ) );
 
       // Register our custom settings and expose it to the REST API.
-		  add_action( 'admin_init', array( get_class(), 'register_custom_settings' ) );
-		  add_action( 'rest_api_init', array( get_class(), 'register_custom_settings' ) );
+		add_action( 'admin_init', array( get_class(), 'register_custom_settings' ) );
+		add_action( 'rest_api_init', array( get_class(), 'register_custom_settings' ) );	
+
+		
     } 
     
     public static function add_admin_menu() {
@@ -40,18 +42,18 @@ class First_block{
         return;
       }
 
-      // Enqueue the styles for the core components library.
-		  wp_enqueue_style( 'global' );
-		  wp_enqueue_style( 'wp-edit-post' );
+      	// Enqueue the styles for the core components library.
+		wp_enqueue_style( 'global' );
+		wp_enqueue_style( 'wp-edit-post' );
 
-		  // Our build processs generates a `index.asset.php` file for each entry point.
-		  $asset_file = include FIRST_BLOCK_PATH . 'assets/build/admin/index.asset.php';
+		// Our build processs generates a `index.asset.php` file for each entry point.
+		$asset_file = include FIRST_BLOCK_PATH . 'assets/build/admin/index.asset.php';
 
-      wp_enqueue_style( 'example-wp-settings', plugin_dir_url( __DIR__ ) . 'assets/build/admin/index.css' );
-      wp_enqueue_script( 'example-wp-settings', plugin_dir_url( __DIR__ ) . 'assets/build/admin/index.js', $asset_file['dependencies'],$asset_file['version'], true );
+      	wp_enqueue_style( 'example-wp-settings', plugin_dir_url( __DIR__ ) . 'assets/build/admin/index.css' );
+      	wp_enqueue_script( 'example-wp-settings', plugin_dir_url( __DIR__ ) . 'assets/build/admin/index.js', $asset_file['dependencies'],$asset_file['version'], true );
     }
 
-    	/**
+    /**
 	 * Register our custom settings handler.
 	 *
 	 * @return void
@@ -77,9 +79,9 @@ class First_block{
 							'account_number' => array( // Schema for our 'account_number'.
 								'type' => 'string',
 							),
-							'account_key'    => array( // Schema for our 'account_key'.
-								'type' => 'string',
-							),
+							// 'account_key'    => array( // Schema for our 'account_key'.
+							// 	'type' => 'string',
+							// ),
 						),
 					),
 				),
@@ -98,7 +100,7 @@ class First_block{
 		// Sanitize our 'account_number'.
 		$settings['account_number'] = sanitize_text_field( $settings['account_number'] );
 		// Sanitize our 'account_key'.
-		$settings['account_key'] = sanitize_text_field( $settings['account_key'] );
+		//$settings['account_key'] = sanitize_text_field( $settings['account_key'] );
 		return $settings;
 	}
   

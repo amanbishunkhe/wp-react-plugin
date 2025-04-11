@@ -1,28 +1,57 @@
-import { Flex,FlexItem,TextControl } from '@wordpress/components' ;
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
-  
-function Panel(){
+import { Flex, FlexItem, TextControl } from '@wordpress/components';
 
-    const [ accountNumber , setAccountNumber]  = useState( '' );
-    const handleChange = (newValue) => {
-        setAccountNumber( newValue );
-    }
+import { useDispatch, useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 
-    return(
-        <Flex>  
-            <FlexItem>
-                <TextControl
-                    label = { __( 'Acount Number' )}
-                    value ={ accountNumber } 
-                    onChange = { handleChange }
-                    type  = {'text'}
+function Panel() {
+	// Get the settings from the store.
+	const { record: settings, hasResolved } = useSelect( ( select ) => {
+		return {
+			record: select( coreStore ).getEditedEntityRecord( 'root', 'site' ),
+			hasResolved: select( coreStore ).hasFinishedResolution(
+				'getEditedEntityRecord',
+				[ 'root', 'site' ]
+			),
+		};
+	} );
 
-                />
-            </FlexItem>
-           
-        </Flex>    
-    )
+	// We'll use these functions to save the settings to the store.
+	const { editEntityRecord } = useDispatch( coreStore );
+
+	if ( ! hasResolved ) {
+		return null;
+	}
+
+	// This will save settings the settings to the local state only.
+	const updateOptions = ( key, value ) => {
+		editEntityRecord( 'root', 'site', undefined, {
+			wpdev_account_settings: {
+				...settings.wpdev_account_settings,
+				[ key ]: value,
+			},
+		} );
+	};
+
+	return (
+		<Flex
+			direction="column"
+			gap="4"
+			className="example-wp-settings-field-group"
+		>
+			<FlexItem>
+				<TextControl
+					label={ __( 'Account Number' ) }
+					value={ settings.wpdev_account_settings?.account_number }
+					type={ 'text' }
+					onChange={ ( value ) => {
+						updateOptions( 'account_number', value );
+					} }
+				/>
+			</FlexItem>
+			
+		</Flex>
+	);
 }
 
 export default Panel;
